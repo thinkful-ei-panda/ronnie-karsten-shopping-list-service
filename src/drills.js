@@ -11,14 +11,14 @@ function searchByProductName(searchTerm) {
   knexInstance
     .select('*')
     .from('shopping_list')
-    .whereRAW('LOWER(item_name) LIKE ?', '%' + searchTerm.toLowerCase() + '%')
+    .where('item_name', 'ILIKE', `%${searchTerm}%`)
     .then((result) => {
       console.log(result);
     })
     .catch((err) => console.log(err))
     .finally(() => db.destroy());
 }
-searchByProductName();
+searchByProductName(`Don''t go bacon my heart`);
 
 function paginateProducts(pageNumber) {
   const productPerPage = 6;
@@ -34,7 +34,7 @@ function paginateProducts(pageNumber) {
     .catch((err) => console.log(err))
     .finally(() => db.destroy());
 }
-paginateProducts();
+paginateProducts(7);
 
 function addedDaysAgo(daysAgo) {
   knexInstance
@@ -45,14 +45,13 @@ function addedDaysAgo(daysAgo) {
       knexInstance.raw(`now() - '?? days':: INTERVAL`, daysAgo)
     )
     .from('shopping_list')
-    .groupBy('item_name', 'date_added')
     .then((result) => {
       console.log(result);
     })
     .catch((err) => console.log(err))
     .finally(() => db.destroy());
 }
-addedAfterDate();
+addedDaysAgo(3);
 
 function totalCost() {
   knexInstance
